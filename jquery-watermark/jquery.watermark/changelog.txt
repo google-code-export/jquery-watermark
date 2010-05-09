@@ -2,7 +2,12 @@ Changelog for Watermark plugin for jQuery
 Copyright © 2009-2010 Todd Northrop
 http://www.speednet.biz/
 
-Last updated January 14, 2010
+Last updated May 9, 2010
+
+____________________________
+Version 3.0.5 (2010-05-09)
+	
+	Changed the licensing model to dual-licensed under the MIT or GPL Version 2 licenses.
 
 ____________________________
 Version 3.0.4 (2010-01-14)
