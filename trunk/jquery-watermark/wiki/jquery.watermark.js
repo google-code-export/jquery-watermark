@@ -1,30 +1,17 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.0.4
+	Version: 3.0.5
 	http://jquery-watermark.googlecode.com/
 
 	Copyright (c) 2009-2010 Todd Northrop
 	http://www.speednet.biz/
 	
-	January 14, 2010
+	May 9, 2010
 
 	Requires:  jQuery 1.2.3+
 	
-	This program is free software: you can redistribute it and/or modify
-	it under the terms of the GNU General Public License as published by
-	the Free Software Foundation, either version 3 of the License, or
-	(at your option) any later version, subject to the following conditions:
-	
-	The above copyright notice and this permission notice shall be
-	included in all copies or substantial portions of the Software.
-	
-	This program is distributed in the hope that it will be useful,
-	but WITHOUT ANY WARRANTY; without even the implied warranty of
-	MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-	GNU General Public License for more details.
-
-	You should have received a copy of the GNU General Public License
-	along with this program.  If not, see <http://www.gnu.org/licenses/>.
+	Dual licensed under the MIT or GPL Version 2 licenses.
+	See mit-license.txt and gpl2-license.txt in the project root for details.
 ------------------------------------------------------*/
 
 (function ($) {
@@ -113,7 +100,7 @@ $.extend($.expr[":"], {
 $.watermark = {
 
 	// Current version number of the plugin
-	version: "3.0.4",
+	version: "3.0.5",
 		
 	// Default options used when watermarks are instantiated.
 	// Can be changed to affect the default behavior for all
