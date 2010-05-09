@@ -2,13 +2,13 @@ Watermark plugin for jQuery
 Copyright © 2009-2010 Todd Northrop
 http://www.speednet.biz/
 
-Last updated May 31, 2009
+Last updated May 9, 2010
 
 This simple-to-use jQuery plugin adds watermark capability to HTML
 input elements.
 
-Released under the terms of the GNU General Public License version 3.
-See license.txt for details.
+Dual licensed under the MIT or GPL Version 2 licenses.
+See mit-license.txt and gpl2-license.txt in the project root for details.
 
 See changelog.txt for a summary of changes to the project.
 
