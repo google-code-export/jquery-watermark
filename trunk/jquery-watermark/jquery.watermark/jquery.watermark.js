@@ -500,7 +500,7 @@ if (triggerFns.length) {
 				window[name] = (function (origFn) {
 					return function () {
 						$.watermark.hideAll();
-						origFn.apply(null, Array.prototype.slice.call(arguments));
+						return origFn.apply(null, Array.prototype.slice.call(arguments));
 					};
 				})(fn);
 			}

@@ -8,6 +8,8 @@ ____________________________
 Version 3.0.5 (2010-05-09)
 	
 	Changed the licensing model to dual-licensed under the MIT or GPL Version 2 licenses.
+	
+	Bug fix for ASP.NET validation control.
 
 ____________________________
 Version 3.0.4 (2010-01-14)
