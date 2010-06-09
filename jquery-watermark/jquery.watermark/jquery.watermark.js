@@ -1,6 +1,6 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.0.5
+	Version: 3.0.x
 	http://jquery-watermark.googlecode.com/
 
 	Copyright (c) 2009-2010 Todd Northrop
@@ -100,7 +100,7 @@ $.extend($.expr[":"], {
 $.watermark = {
 
 	// Current version number of the plugin
-	version: "3.0.5",
+	version: "3.0.x",
 		
 	// Default options used when watermarks are instantiated.
 	// Can be changed to affect the default behavior for all
@@ -284,6 +284,10 @@ $.fn.watermark = function (text, options) {
 	/// 	passwords).  It is *possible* to make programmatic changes, but it must be done in a certain way, and
 	/// 	overall it is not recommended.
 	/// </remarks>
+	
+	if (!this.length) {
+		return this;
+	}
 	
 	var hasText = (typeof(text) === "string"), hasClass;
 	
@@ -482,7 +486,7 @@ $.fn.watermark = function (text, options) {
 			
 			$.watermark._show($input);
 		}
-	).end();
+	);
 };
 
 // Hijack any functions found in the triggerFns list
