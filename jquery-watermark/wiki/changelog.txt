@@ -2,7 +2,16 @@ Changelog for Watermark plugin for jQuery
 Copyright © 2009-2010 Todd Northrop
 http://www.speednet.biz/
 
-Last updated May 9, 2010
+Last updated June 21, 2010
+
+____________________________
+Version 3.0.6 (2010-06-21)
+	
+	Added multiple "sanity checks" throughout the code for potential unknown attribute values. This is in response to some reports of the plugin not functioning alongside some third party code and other rare situations. For example, should gracefully handle a situation when third party code unexpectedly modifies a DOM element containing a watermark. Naturally, there are limits to how much you can protect a developer from third party code interference.
+	
+	Removed .end() from fn.watermark() return value, which was making chaining impossible.
+	
+	Immediately return from fn.watermark() call if no elements are in the jQuery set - "best practice".
 
 ____________________________
 Version 3.0.5 (2010-05-09)

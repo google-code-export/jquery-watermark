@@ -1,12 +1,12 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.0.5
+	Version: 3.0.6
 	http://jquery-watermark.googlecode.com/
 
 	Copyright (c) 2009-2010 Todd Northrop
 	http://www.speednet.biz/
 	
-	May 9, 2010
+	June 21, 2010
 
 	Requires:  jQuery 1.2.3+
 	
@@ -62,11 +62,12 @@ var
 // :data(<name>*=<value>)  Includes elements that have a specific jQuery data name defined, with a value that contains the value specified.
 $.extend($.expr[":"], {
 	"search": function (elem) {
-		return "search" === elem.type;
+		return "search" === (elem.type || "");
 	},
 	
 	"data": function (element, index, matches, set) {
 		var data, parts = /^((?:[^=!^$*]|[!^$*](?!=))+)(?:([!^$*]?=)(.*))?$/.exec(matches[3]);
+
 		if (parts) {
 			data = $(element).data(parts[1]);
 			
@@ -100,7 +101,7 @@ $.extend($.expr[":"], {
 $.watermark = {
 
 	// Current version number of the plugin
-	version: "3.0.5",
+	version: "3.0.6",
 		
 	// Default options used when watermarks are instantiated.
 	// Can be changed to affect the default behavior for all
@@ -130,39 +131,46 @@ $.watermark = {
 	
 	// Internal use only.
 	_hide: function ($input, focus) {
+		var inputVal = $input.val() || "",
+			inputWm = $input.data(dataText) || "",
+			maxLen = $input.data(dataMaxLen) || 0,
+			className = $input.data(dataClass);
 	
-		if ($input.val() == $input.data(dataText)) {
+		if ((inputWm.length) && (inputVal == inputWm)) {
 			$input.val("");
 			
 			// Password type?
 			if ($input.data(dataPassword)) {
 				
-				if ($input.attr("type") === "text") {
-					var $pwd = $input.data(dataPassword), 
-						$wrap = $input.parent();
+				if (($input.attr("type") || "") === "text") {
+					var $pwd = $input.data(dataPassword) || [], 
+						$wrap = $input.parent() || [];
 						
-					$wrap[0].removeChild($input[0]); // Can't use jQuery methods, because they destroy data
-					$wrap[0].appendChild($pwd[0]);
-					$input = $pwd;
+					if (($pwd.length) && ($wrap.length)) {
+						$wrap[0].removeChild($input[0]); // Can't use jQuery methods, because they destroy data
+						$wrap[0].appendChild($pwd[0]);
+						$input = $pwd;
+					}
 				}
 			}
 			
-			if ($input.data(dataMaxLen)) {
-				$input.attr("maxLength", $input.data(dataMaxLen));
+			if (maxLen) {
+				$input.attr("maxLength", maxLen);
 				$input.removeData(dataMaxLen);
 			}
 		
 			if (focus) {
 				$input.attr("autocomplete", "off");  // Avoid NS_ERROR_XPC_JS_THREW_STRING error in Firefox
+				
 				window.setTimeout(
 					function () {
 						$input.select();  // Fix missing cursor in IE
 					}
-				, 0);
+				, 1);
 			}
 		}
 		
-		$input.removeClass($input.data(dataClass));
+		className && $input.removeClass(className);
 	},
 	
 	// Display one or more watermarks by specifying any selector type
@@ -178,9 +186,10 @@ $.watermark = {
 	
 	// Internal use only.
 	_show: function ($input) {
-		var val = $input.val(),
-			text = $input.data(dataText),
-			type = $input.attr("type");
+		var val = $input.val() || "",
+			text = $input.data(dataText) || "",
+			type = $input.attr("type") || "",
+			className = $input.data(dataClass);
 
 		if (((val.length == 0) || (val == text)) && (!$input.data(dataFocus))) {
 			pageDirty = true;
@@ -189,19 +198,21 @@ $.watermark = {
 			if ($input.data(dataPassword)) {
 				
 				if (type === "password") {
-					var $wm = $input.data(dataPassword),
-						$wrap = $input.parent();
+					var $pwd = $input.data(dataPassword) || [],
+						$wrap = $input.parent() || [];
 						
-					$wrap[0].removeChild($input[0]); // Can't use jQuery methods, because they destroy data
-					$wrap[0].appendChild($wm[0]);
-					$input = $wm;
-					$input.attr("maxLength", text.length);
+					if (($pwd.length) && ($wrap.length)) {
+						$wrap[0].removeChild($input[0]); // Can't use jQuery methods, because they destroy data
+						$wrap[0].appendChild($pwd[0]);
+						$input = $pwd;
+						$input.attr("maxLength", text.length);
+					}
 				}
 			}
 		
 			// Ensure maxLength big enough to hold watermark (input of type="text" or type="search" only)
 			if ((type === "text") || (type === "search")) {
-				var maxLen = $input.attr("maxLength");
+				var maxLen = $input.attr("maxLength") || 0;
 				
 				if ((maxLen > 0) && (text.length > maxLen)) {
 					$input.data(dataMaxLen, maxLen);
@@ -209,7 +220,7 @@ $.watermark = {
 				}
 			}
             
-			$input.addClass($input.data(dataClass));
+			className && $input.addClass(className);
 			$input.val(text);
 		}
 		else {
@@ -285,7 +296,12 @@ $.fn.watermark = function (text, options) {
 	/// 	overall it is not recommended.
 	/// </remarks>
 	
-	var hasText = (typeof(text) === "string"), hasClass;
+	if (!this.length) {
+		return this;
+	}
+	
+	var hasClass = false,
+		hasText = (typeof(text) === "string");
 	
 	if (typeof(options) === "object") {
 		hasClass = (typeof(options.className) === "string");
@@ -334,7 +350,7 @@ $.fn.watermark = function (text, options) {
 					
 					// Placeholder attribute (WebKit)
 					// Big thanks to Opera for the wacky test required
-					if ((("" + $input.css("-webkit-appearance")).replace("undefined", "") !== "") && ($input.attr("tagName") !== "TEXTAREA")) {
+					if ((("" + $input.css("-webkit-appearance")).replace("undefined", "") !== "") && (($input.attr("tagName") || "") !== "TEXTAREA")) {
 						
 						// className is not set because WebKit doesn't appear to have
 						// a separate class name property for placeholders (watermarks).
@@ -353,9 +369,9 @@ $.fn.watermark = function (text, options) {
 				$input.data(dataFlag, 1); // Flag indicates watermark was initialized
 				
 				// Special processing for password type
-				if ($input.attr("type") === "password") {
-					var $wrap = $input.wrap("<span>").parent();
-					var $wm = $($wrap.html().replace(/type=["']?password["']?/i, 'type="text"'));
+				if (($input.attr("type") || "") === "password") {
+					var $wrap = $input.wrap("<span>").parent(),
+						$wm = $($wrap.html().replace(/type=["']?password["']?/i, 'type="text"'));
 					
 					$wm.data(dataText, $input.data(dataText));
 					$wm.data(dataClass, $input.data(dataClass));
@@ -482,7 +498,7 @@ $.fn.watermark = function (text, options) {
 			
 			$.watermark._show($input);
 		}
-	).end();
+	);
 };
 
 // Hijack any functions found in the triggerFns list
