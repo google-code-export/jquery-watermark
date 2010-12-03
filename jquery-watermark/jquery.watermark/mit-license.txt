@@ -1,4 +1,4 @@
-Copyright (c) 2009-2010 Todd Northrop, http://www.speednet.biz/
+Copyright (c) 2009-2011 Todd Northrop, http://www.speednet.biz/
 
 Permission is hereby granted, free of charge, to any person obtaining
 a copy of this software and associated documentation files (the
