@@ -5,6 +5,11 @@ http://www.speednet.biz/
 Last updated December 3, 2010
 
 ____________________________
+Version 3.0.8 (2010-12-03)
+	
+	Replaced the plugin's :data() extension with an exact copy of the :data() extension from jQuery UI. This was done because of reports of conflicts with jQuery UI. The jQuery UI version of the :data() extension is far less-capable than the one formerly in the plugin, so I have retained the old code in a separate file you can find in the SVN reporsitory, called "jquery.data.js".
+
+____________________________
 Version 3.0.7 (2010-12-03)
 	
 	Added an event listener for the beforeunload event that hides all watermarks. This is done mainly because WebKit browsers remember the watermark text during navigation and try to restore the watermark text after the user clicks the Back button. We can avoid this by hiding the text before the browser has a chance to save it. The regular unload event was tried, but it seems the browser saves the text before that event kicks off, because it didn't work.
