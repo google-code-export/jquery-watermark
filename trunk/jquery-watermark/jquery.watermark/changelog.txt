@@ -1,8 +1,17 @@
 Changelog for Watermark plugin for jQuery
-Copyright © 2009-2010 Todd Northrop
+Copyright © 2009-2011 Todd Northrop
 http://www.speednet.biz/
 
-Last updated June 21, 2010
+Last updated December 3, 2010
+
+____________________________
+Version 3.0.7 (2010-12-03)
+	
+	Added an event listener for the beforeunload event that hides all watermarks. This is done mainly because WebKit browsers remember the watermark text during navigation and try to restore the watermark text after the user clicks the Back button. We can avoid this by hiding the text before the browser has a chance to save it. The regular unload event was tried, but it seems the browser saves the text before that event kicks off, because it didn't work.
+	
+	Implemented a better test for native placeholder attribute support.
+	
+	Minor change to wrapper "scope" function to create a local variable for the window object.
 
 ____________________________
 Version 3.0.6 (2010-06-21)

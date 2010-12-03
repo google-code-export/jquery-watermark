@@ -1,8 +1,8 @@
 Watermark plugin for jQuery
-Copyright © 2009-2010 Todd Northrop
+Copyright © 2009-2011 Todd Northrop
 http://www.speednet.biz/
 
-Last updated May 9, 2010
+Last updated December 3, 2010
 
 This simple-to-use jQuery plugin adds watermark capability to HTML
 input elements.

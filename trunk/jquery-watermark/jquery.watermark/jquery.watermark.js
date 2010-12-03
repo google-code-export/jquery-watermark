@@ -1,12 +1,12 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.0.6
+	Version: 3.0.7
 	http://jquery-watermark.googlecode.com/
 
-	Copyright (c) 2009-2010 Todd Northrop
+	Copyright (c) 2009-2011 Todd Northrop
 	http://www.speednet.biz/
 	
-	June 21, 2010
+	December 3, 2010
 
 	Requires:  jQuery 1.2.3+
 	
@@ -14,12 +14,9 @@
 	See mit-license.txt and gpl2-license.txt in the project root for details.
 ------------------------------------------------------*/
 
-(function ($) {
+(function ($, window, undefined) {
 
 var
-	// Will speed up references to undefined
-	undefined,
-
 	// String constants for data names
 	dataFlag = "watermark",
 	dataClass = "watermarkClass",
@@ -51,7 +48,10 @@ var
 	
 	// Holds a value of true if a watermark was displayed since the last
 	// hideAll() was executed. Avoids repeatedly calling hideAll().
-	pageDirty = false;
+	pageDirty = false,
+	
+	// Detects if the browser can handle native placeholders
+	hasNativePlaceholder = ("placeholder" in document.createElement("input"));
 
 // Extends jQuery with a custom selector - ":data(...)"
 // :data(<name>)  Includes elements that have a specific name defined in the jQuery data collection. (Only the existence of the name is checked; the value is ignored.)
@@ -101,7 +101,7 @@ $.extend($.expr[":"], {
 $.watermark = {
 
 	// Current version number of the plugin
-	version: "3.0.6",
+	version: "3.0.7",
 		
 	// Default options used when watermarks are instantiated.
 	// Can be changed to affect the default behavior for all
@@ -116,7 +116,17 @@ $.watermark = {
 		
 		// If true, plugin will detect and use native browser support for
 		// watermarks, if available. (e.g., WebKit's placeholder attribute.)
-		useNative: true
+		useNative: true,
+		
+		// If true, all watermarks will be hidden during the window's
+		// beforeunload event. This is done mainly because WebKit
+		// browsers remember the watermark text during navigation
+		// and try to restore the watermark text after the user clicks
+		// the Back button. We can avoid this by hiding the text before
+		// the browser has a chance to save it. The regular unload event
+		// was tried, but it seems the browser saves the text before
+		// that event kicks off, because it didn't work.
+		hideBeforeUnload: true
 	},
 	
 	// Hide one or more watermarks by specifying any selector type
@@ -346,22 +356,20 @@ $.fn.watermark = function (text, options) {
 			else {
 			
 				// Detect and use native browser support, if enabled in options
-				if (options.useNative.call(this, $input)) {
-					
-					// Placeholder attribute (WebKit)
-					// Big thanks to Opera for the wacky test required
-					if ((("" + $input.css("-webkit-appearance")).replace("undefined", "") !== "") && (($input.attr("tagName") || "") !== "TEXTAREA")) {
-						
-						// className is not set because WebKit doesn't appear to have
-						// a separate class name property for placeholders (watermarks).
-						if (hasText) {
-							$input.attr("placeholder", text);
-						}
-						
-						// Only set data flag for non-native watermarks (purposely commented-out)
-						// $input.data(dataFlag, 1);
-						return;
+				if (
+					(hasNativePlaceholder)
+					&& (options.useNative.call(this, $input))
+					&& (($input.attr("tagName") || "") !== "TEXTAREA")
+				) {
+					// className is not set because current placeholder standard doesn't
+					// have a separate class name property for placeholders (watermarks).
+					if (hasText) {
+						$input.attr("placeholder", text);
 					}
+					
+					// Only set data flag for non-native watermarks
+					// [purposely commented-out] -> $input.data(dataFlag, 1);
+					return;
 				}
 				
 				$input.data(dataText, hasText? text : "");
@@ -524,4 +532,10 @@ if (triggerFns.length) {
 	});
 }
 
-})(jQuery);
+$(window).bind("beforeunload", function () {
+	if ($.watermark.options.hideBeforeUnload) {
+		$.watermark.hideAll();
+	}
+});
+
+})(jQuery, window);
