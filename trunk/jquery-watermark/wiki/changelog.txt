@@ -2,7 +2,16 @@ Changelog for Watermark plugin for jQuery
 Copyright © 2009-2011 Todd Northrop
 http://www.speednet.biz/
 
-Last updated December 3, 2010
+Last updated December 21, 2010
+
+____________________________
+Version 3.1 (2010-12-21)
+	
+	Enhanced the native jQuery .val() function to automatically ignore watermarks when getting or setting values. You no longer have to hide the watermark before getting the element value with .val() -- that is handled by the plugin. Just call $("#myElement").val() to get the underlying value. Also, the watermarks are handled automatically when .val() is used to set one or more element values, either showing or hiding the watermark and setting the correct CSS class name.
+	
+	Protects against re-defining an existing watermark object on the jQuery object. So even if source file is loaded more than once, the original object is not touched a second time. Also, all the other initialization logic is guaranteed to run one time only.
+	
+	Added a demonstration to the demo page to test the use of .val() (both getting and setting).
 
 ____________________________
 Version 3.0.8 (2010-12-03)

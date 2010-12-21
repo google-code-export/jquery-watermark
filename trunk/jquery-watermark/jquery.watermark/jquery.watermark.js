@@ -1,12 +1,12 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.0.8
+	Version: 3.1
 	http://jquery-watermark.googlecode.com/
 
 	Copyright (c) 2009-2011 Todd Northrop
 	http://www.speednet.biz/
 	
-	December 3, 2010
+	December 21, 2010
 
 	Requires:  jQuery 1.2.3+
 	
@@ -26,6 +26,9 @@ var
 	dataPassword = "watermarkPassword",
 	dataText = "watermarkText",
 	
+	// Copy of native jQuery regex use to strip return characters from element value
+	rreturn = /\r/g,
+
 	// Includes only elements with watermark defined
 	selWatermarkDefined = ":data(" + dataFlag + ")",
 
@@ -53,34 +56,18 @@ var
 	// Detects if the browser can handle native placeholders
 	hasNativePlaceholder = ("placeholder" in document.createElement("input"));
 
-// Extends jQuery with a custom selector - ":data(...)"
-// :data(<name>)  Includes elements that have a specific name defined in the jQuery data collection. (Only the existence of the name is checked; the value is ignored.)
-// :data(<name>=<value>)  Includes elements that have a specific jQuery data name defined, with a specific value associated with it.
-// :data(<name>!=<value>)  Includes elements that have a specific jQuery data name defined, with a value that is not equal to the value specified.
-// :data(<name>^=<value>)  Includes elements that have a specific jQuery data name defined, with a value that starts with the value specified.
-// :data(<name>$=<value>)  Includes elements that have a specific jQuery data name defined, with a value that ends with the value specified.
-// :data(<name>*=<value>)  Includes elements that have a specific jQuery data name defined, with a value that contains the value specified.
-$.extend($.expr[":"], {
-	search: function (elem) {
-		return "search" === (elem.type || "");
-	},
-	
-	data: function( elem, i, match ) {
-		return !!$.data( elem, match[ 3 ] );
-	}
-});
-
-$.watermark = {
+// Best practice: this plugin adds only one method to the jQuery object.
+// Also ensures that the watermark code is only added once.
+$.watermark = $.watermark || {
 
 	// Current version number of the plugin
-	version: "3.0.8",
+	version: "3.1",
 		
+	runOnce: true,
+	
 	// Default options used when watermarks are instantiated.
 	// Can be changed to affect the default behavior for all
 	// new or updated watermarks.
-	// BREAKING CHANGE:  The $.watermark.className
-	// property that was present prior to version 3.0.2 must
-	// be changed to $.watermark.options.className
 	options: {
 		
 		// Default class name for all watermarks
@@ -113,13 +100,14 @@ $.watermark = {
 	
 	// Internal use only.
 	_hide: function ($input, focus) {
-		var inputVal = $input.val() || "",
+		var elem = $input[0],
+			inputVal = (elem.value || "").replace(rreturn, ""),
 			inputWm = $input.data(dataText) || "",
 			maxLen = $input.data(dataMaxLen) || 0,
 			className = $input.data(dataClass);
 	
 		if ((inputWm.length) && (inputVal == inputWm)) {
-			$input.val("");
+			elem.value = "";
 			
 			// Password type?
 			if ($input.data(dataPassword)) {
@@ -168,7 +156,8 @@ $.watermark = {
 	
 	// Internal use only.
 	_show: function ($input) {
-		var val = $input.val() || "",
+		var elem = $input[0],
+			val = (elem.value || "").replace(rreturn, ""),
 			text = $input.data(dataText) || "",
 			type = $input.attr("type") || "",
 			className = $input.data(dataClass);
@@ -203,7 +192,7 @@ $.watermark = {
 			}
             
 			className && $input.addClass(className);
-			$input.val(text);
+			elem.value = text;
 		}
 		else {
 			$.watermark._hide($input);
@@ -224,7 +213,7 @@ $.watermark = {
 	}
 };
 
-$.fn.watermark = function (text, options) {
+$.fn.watermark = $.fn.watermark || function (text, options) {
 	///	<summary>
 	///		Set watermark text and class name on all input elements of type="text/password/search" and
 	/// 	textareas within the matched set. If className is not specified in options, the default is
@@ -284,6 +273,10 @@ $.fn.watermark = function (text, options) {
 	
 	var hasClass = false,
 		hasText = (typeof(text) === "string");
+	
+	if (hasText) {
+		text = text.replace(rreturn, "");
+	}
 	
 	if (typeof(options) === "object") {
 		hasClass = (typeof(options.className) === "string");
@@ -412,10 +405,11 @@ $.fn.watermark = function (text, options) {
 						// Firefox makes this lovely function necessary because the dropped text
 						// is merged with the watermark before the drop event is called.
 						function (evt) {
-							var dropText = evt.originalEvent.dataTransfer.getData("Text");
+							var elem = $input[0],
+								dropText = evt.originalEvent.dataTransfer.getData("Text");
 							
-							if ($input.val().replace(dropText, "") === $input.data(dataText)) {
-								$input.val(dropText);
+							if ((elem.value || "").replace(rreturn, "").replace(dropText, "") === $input.data(dataText)) {
+								elem.value = dropText;
 							}
 							
 							$input.focus();
@@ -481,33 +475,94 @@ $.fn.watermark = function (text, options) {
 	);
 };
 
-// Hijack any functions found in the triggerFns list
-if (triggerFns.length) {
+// The code included within the following if structure is guaranteed to only run once,
+// even if the watermark script file is included multiple times in the page.
+if ($.watermark.runOnce) {
+	$.watermark.runOnce = false;
 
-	// Wait until DOM is ready before searching
-	$(function () {
-		var i, name, fn;
-	
-		for (i=triggerFns.length-1; i>=0; i--) {
-			name = triggerFns[i];
-			fn = window[name];
+	$.extend($.expr[":"], {
+
+		// Extends jQuery with a custom selector - ":search" for determining is the element
+		// is a "search" input type.
+		search: function (elem) {
+			return "search" === (elem.type || "");
+		},
+		
+		// Extends jQuery with a custom selector - ":data(...)"
+		// :data(<name>)  Includes elements that have a specific name defined in the jQuery data
+		// collection. (Only the existence of the name is checked; the value is ignored.)
+		// A more sophisticated version of the :data() custom selector originally part of this plugin
+		// was removed for compatibility with jQuery UI. The original code can be found in the SVN
+		// source listing in the file, "jquery.data.js".
+		data: function( elem, i, match ) {
+			return !!$.data( elem, match[ 3 ] );
+		}
+	});
+
+	// Overloads the jQuery .val() function to return the underlying input value on
+	// watermarked input elements.  When .val() is being used to set values, this
+	// function ensures watermarks are properly set/removed after the values are set.
+	// Uses self-executing function to override the default jQuery function.
+	(function (valOld) {
+
+		$.fn.val = function () {
 			
-			if (typeof(fn) === "function") {
-				window[name] = (function (origFn) {
-					return function () {
-						$.watermark.hideAll();
-						return origFn.apply(null, Array.prototype.slice.call(arguments));
-					};
-				})(fn);
+			// Best practice: return immediately if empty matched set
+			if ( !this.length ) {
+				return arguments.length? this : undefined;
 			}
+
+			// If no args, then we're getting the value of the first element;
+			// otherwise we're setting values for all elements in matched set
+			if ( !arguments.length ) {
+
+				// If element is watermarked, get the underlying value;
+				// otherwise use native jQuery .val()
+				if ( this.data(dataFlag) ) {
+					var v = (this[0].value || "").replace(rreturn, "");
+					return (v === (this.data(dataText) || ""))? "" : v;
+				}
+				else {
+					return valOld.apply( this, arguments );
+				}
+			}
+			else {
+				valOld.apply( this, arguments );
+				$.watermark.show(this);
+				return this;
+			}
+		};
+
+	})($.fn.val);
+	
+	// Hijack any functions found in the triggerFns list
+	if (triggerFns.length) {
+
+		// Wait until DOM is ready before searching
+		$(function () {
+			var i, name, fn;
+		
+			for (i=triggerFns.length-1; i>=0; i--) {
+				name = triggerFns[i];
+				fn = window[name];
+				
+				if (typeof(fn) === "function") {
+					window[name] = (function (origFn) {
+						return function () {
+							$.watermark.hideAll();
+							return origFn.apply(null, Array.prototype.slice.call(arguments));
+						};
+					})(fn);
+				}
+			}
+		});
+	}
+
+	$(window).bind("beforeunload", function () {
+		if ($.watermark.options.hideBeforeUnload) {
+			$.watermark.hideAll();
 		}
 	});
 }
-
-$(window).bind("beforeunload", function () {
-	if ($.watermark.options.hideBeforeUnload) {
-		$.watermark.hideAll();
-	}
-});
 
 })(jQuery, window);
