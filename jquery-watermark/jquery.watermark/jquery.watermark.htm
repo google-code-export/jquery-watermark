@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<title>jQuery Watermark 3.0.8 Demo</title>
+	<title>jQuery Watermark 3.1 Demo</title>
 
 	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
 	<script type="text/javascript">google.load("jquery", "1.4");</script>
@@ -138,7 +138,7 @@
 <body>
 
 <h1>jQuery Watermark Plugin</h1>
-<h2>v 3.0.8</h2>
+<h2>v 3.1</h2>
 
 <fieldset id="summary">
 	<p>This jQuery plugin will easily create watermark hints in input and textarea elements.</p>
@@ -151,7 +151,7 @@
 		<li>Visual Studio Intellisense-compatible documentation included in source</li>
 		<li>Comes with jQuery selector extension ":data(...)" (documented in source)</li>
 		<li>Password input automatically switches back to obfuscated text when focused</li>
-		<li>Minified version is very compact &mdash; under 3,000 bytes</li>
+		<li>Minified version is very compact &mdash; under 4,400 bytes</li>
 	</ul>
 	<p><strong>Demonstrations:</strong></p>
 	<ul id="toc">
@@ -161,6 +161,7 @@
 		<li><a href="#4">Demo 4</a> &ndash; Multi-line watermark in a TEXTAREA tag</li>
 		<li><a href="#5">Demo 5</a> &ndash; Watermark in a password input element</li>
 		<li><a href="#6">Demo 6</a> &ndash; Support for WebKit search element (type=&quot;search&quot;)</li>
+		<li><a href="#7">Demo 7</a> &ndash; .val() gets/sets underlying element value</li>
 	</ul>
 </fieldset>
 
@@ -269,6 +270,25 @@
 	</fieldset>
 </form>
 
+<form id="demo7" action="" method="GET" class="cmxform">
+	<h3>Demonstration 7</h3>
+	<fieldset>
+		<legend>.val() gets/sets underlying element value</legend>
+		<ol>
+			<li><label for="d7-name">Name</label> <input id="d7-name" /></li>
+			<li><label for="d7-address1">Address</label> <input id="d7-address1" /></li>
+			<li><label for="d7-town-city">Town/City</label> <input id="d7-town-city" /></li>
+			<li><label for="d7-state">State/Province</label> <input id="d7-state" /></li>
+			<li><label for="d7-postcode">Zip/Postcode</label> <input id="d7-postcode" /></li>
+			<li><label for="d7-country">Country</label> <input id="d7-country" /></li>
+			<li><label></label> <input id="d7-show-values" type="button" value="Show Values" /> &nbsp; <input id="d7-set-values" type="button" value="Set Values" /></li>
+			<li><label></label> &bull; This demonstration uses jQuery's <strong>.val()</strong> to retrieve all element values.</li>
+			<li><label></label> &bull; After clicking Show Values, when you see &lt;empty&gt; displayed, it is correctly ignoring a watermark value.</li>
+			<li><label></label> &bull; Click Set Values to use .val() to set some elements to a value and others to a blank string. Watermarks/classes should be set.</li>
+			<li><label></label> &bull; Zip/Postcode and Country are configured with <strong>useNative: false</strong> so both native and non-native watermarks can be tested.</li>
+		</ol>
+	</fieldset>
+</form>
 <div id="foot">
 	<p>Watermark plugin for jQuery</p>
 	<p>Copyright &copy; 2009-2010 Todd Northrop</p>
@@ -366,6 +386,30 @@
 		$("#d6-nativesearchhistory").watermark("Enter keyword(s) or select from past searches");
 		$("#d6-search").watermark("Search", {useNative: false});
 		$("#d6-searchhistory").watermark("Enter keyword(s) or select from past searches", {useNative: false});
+	});
+
+	// ** DEMO 7 *************
+	$(function () {
+		$("#d7-name,#d7-address1,#d7-town-city,#d7-state").watermark("Optional");
+		$("#d7-postcode,#d7-country").watermark( "Optional", { useNative: false } );
+		$("#d7-show-values").click(function () {
+			alert(
+				"Name:  " + ($("#d7-name").val() || "<empty>") + "\n"
+				+ "Address:  " + ($("#d7-address1").val() || "<empty>") + "\n"
+				+ "Town/City:  " + ($("#d7-town-city").val() || "<empty>") + "\n"
+				+ "State/Province:  " + ($("#d7-state").val() || "<empty>") + "\n"
+				+ "Zip/Postcode:  " + ($("#d7-postcode").val() || "<empty>") + "\n"
+				+ "Country:  " + ($("#d7-country").val() || "<empty>") + "\n"
+			);
+		});
+		$("#d7-set-values").click(function () {
+			$("#d7-name").val("John Doe");
+			$("#d7-address1").val("");
+			$("#d7-town-city").val("Someplace");
+			$("#d7-state").val("");
+			$("#d7-postcode").val("00000");
+			$("#d7-country").val("");
+		});
 	});
 
 	// ** Table of Contents *************
