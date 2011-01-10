@@ -1,12 +1,12 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.1
+	Version: 3.1.1
 	http://jquery-watermark.googlecode.com/
 
 	Copyright (c) 2009-2011 Todd Northrop
 	http://www.speednet.biz/
 	
-	December 21, 2010
+	January 10, 2011
 
 	Requires:  jQuery 1.2.3+
 	
@@ -61,7 +61,7 @@ var
 $.watermark = $.watermark || {
 
 	// Current version number of the plugin
-	version: "3.1",
+	version: "3.1.1",
 		
 	runOnce: true,
 	
@@ -177,6 +177,7 @@ $.watermark = $.watermark || {
 						$wrap[0].appendChild($pwd[0]);
 						$input = $pwd;
 						$input.attr("maxLength", text.length);
+						elem = $input[0];
 					}
 				}
 			}
