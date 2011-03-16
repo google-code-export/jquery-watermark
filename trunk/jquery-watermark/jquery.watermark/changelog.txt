@@ -5,6 +5,11 @@ http://www.speednet.biz/
 Last updated January 10, 2011
 
 ____________________________
+Version 3.1.2 (2011-03-16)
+	
+	Fixed Issue #51 - added tag names to selWatermarkAble and selWatermarkDefined per jQuery team recommendation. Also, the absence of the tag names seems to cause a script error in IE7 and lower with newer versions of jQuery (1.5+), so this change also fixes that new script error.
+
+____________________________
 Version 3.1.1 (2011-01-10)
 	
 	Fixed a regression bug that prevented non-native watermarks from working in password input boxes.

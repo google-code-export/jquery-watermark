@@ -1,12 +1,12 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.1.1
+	Version: 3.1.2
 	http://jquery-watermark.googlecode.com/
 
 	Copyright (c) 2009-2011 Todd Northrop
 	http://www.speednet.biz/
 	
-	January 10, 2011
+	March 16, 2011
 
 	Requires:  jQuery 1.2.3+
 	
@@ -30,10 +30,10 @@ var
 	rreturn = /\r/g,
 
 	// Includes only elements with watermark defined
-	selWatermarkDefined = ":data(" + dataFlag + ")",
+	selWatermarkDefined = "input:data(" + dataFlag + "),textarea:data(" + dataFlag + ")",
 
 	// Includes only elements capable of having watermark
-	selWatermarkAble = ":text,:password,:search,textarea",
+	selWatermarkAble = "input:text,input:password,input:search,textarea",
 	
 	// triggerFns:
 	// Array of function names to look for in the global namespace.
@@ -61,7 +61,7 @@ var
 $.watermark = $.watermark || {
 
 	// Current version number of the plugin
-	version: "3.1.1",
+	version: "3.1.2",
 		
 	runOnce: true,
 	
