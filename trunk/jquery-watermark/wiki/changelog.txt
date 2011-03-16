@@ -2,7 +2,7 @@ Changelog for Watermark plugin for jQuery
 Copyright © 2009-2011 Todd Northrop
 http://www.speednet.biz/
 
-Last updated January 10, 2011
+Last updated March 16, 2011
 
 ____________________________
 Version 3.1.2 (2011-03-16)
