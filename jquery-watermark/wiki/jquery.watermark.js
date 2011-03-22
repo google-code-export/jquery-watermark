@@ -1,12 +1,12 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.1.2
+	Version: 3.1.3
 	http://jquery-watermark.googlecode.com/
 
 	Copyright (c) 2009-2011 Todd Northrop
 	http://www.speednet.biz/
 	
-	March 16, 2011
+	March 22, 2011
 
 	Requires:  jQuery 1.2.3+
 	
@@ -33,7 +33,7 @@ var
 	selWatermarkDefined = "input:data(" + dataFlag + "),textarea:data(" + dataFlag + ")",
 
 	// Includes only elements capable of having watermark
-	selWatermarkAble = "input:text,input:password,input:search,textarea",
+	selWatermarkAble = "input:text,input:password,input[type=search],input:not([type]),textarea",
 	
 	// triggerFns:
 	// Array of function names to look for in the global namespace.
@@ -61,7 +61,7 @@ var
 $.watermark = $.watermark || {
 
 	// Current version number of the plugin
-	version: "3.1.2",
+	version: "3.1.3",
 		
 	runOnce: true,
 	
@@ -483,12 +483,6 @@ if ($.watermark.runOnce) {
 
 	$.extend($.expr[":"], {
 
-		// Extends jQuery with a custom selector - ":search" for determining is the element
-		// is a "search" input type.
-		search: function (elem) {
-			return "search" === (elem.type || "");
-		},
-		
 		// Extends jQuery with a custom selector - ":data(...)"
 		// :data(<name>)  Includes elements that have a specific name defined in the jQuery data
 		// collection. (Only the existence of the name is checked; the value is ignored.)
