@@ -5,7 +5,7 @@
 	<title>jQuery Watermark 3.1.3 Demo</title>
 
 	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-	<script type="text/javascript">google.load("jquery", "1.5.1");</script>
+	<script type="text/javascript">google.load("jquery", "1.5.2");</script>
 	<script type="text/javascript" src="jquery.watermark.js"></script>
 
 	<style type="text/css" media="screen">
@@ -281,11 +281,14 @@
 			<li><label for="d7-state">State/Province</label> <input id="d7-state" /></li>
 			<li><label for="d7-postcode">Zip/Postcode</label> <input id="d7-postcode" /></li>
 			<li><label for="d7-country">Country</label> <input id="d7-country" /></li>
-			<li><label></label> <input id="d7-show-values" type="button" value="Show Values" /> &nbsp; <input id="d7-set-values" type="button" value="Set Values" /></li>
+			<li><label for="d7-phone">Phone</label> <input id="d7-phone" /></li>
+			<li><label></label> <input id="d7-show-values" type="button" value="Show Values" /> &nbsp; <input id="d7-set-values" type="button" value="Set Values" /> &nbsp; <input id="d7-clear-values" type="button" value="Clear All" /></li>
 			<li><label></label> &bull; This demonstration uses jQuery's <strong>.val()</strong> to retrieve all element values.</li>
 			<li><label></label> &bull; After clicking Show Values, when you see &lt;empty&gt; displayed, it is correctly ignoring a watermark value.</li>
 			<li><label></label> &bull; Click Set Values to use .val() to set some elements to a value and others to a blank string. Watermarks/classes should be set.</li>
+			<li><label></label> &bull; The Clear Values button uses .val() to set all the elements to an empty string (&quot;&quot;).</li>
 			<li><label></label> &bull; Zip/Postcode and Country are configured with <strong>useNative: false</strong> so both native and non-native watermarks can be tested.</li>
+			<li><label></label> &bull; Phone is a plain text element (no watermark) to ensure that non-watermarked .val() calls continue to work fine.</li>
 		</ol>
 	</fieldset>
 </form>
@@ -400,6 +403,7 @@
 				+ "State/Province:  " + ($("#d7-state").val() || "<empty>") + "\n"
 				+ "Zip/Postcode:  " + ($("#d7-postcode").val() || "<empty>") + "\n"
 				+ "Country:  " + ($("#d7-country").val() || "<empty>") + "\n"
+				+ "Phone:  " + ($("#d7-phone").val() || "<empty>") + "\n"
 			);
 		});
 		$("#d7-set-values").click(function () {
@@ -409,6 +413,10 @@
 			$("#d7-state").val("");
 			$("#d7-postcode").val("00000");
 			$("#d7-country").val("");
+			$("#d7-phone").val("555-1212");
+		});
+		$("#d7-clear-values").click(function () {
+			$("#d7-name,#d7-address1,#d7-town-city,#d7-state,#d7-postcode,#d7-country,#d7-phone").val("");
 		});
 	});
 
