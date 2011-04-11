@@ -5,7 +5,7 @@
 	<title>jQuery Watermark 3.1.3 Demo</title>
 
 	<script type="text/javascript" src="http://www.google.com/jsapi"></script>
-	<script type="text/javascript">google.load("jquery", "1.5.2");</script>
+	<script type="text/javascript">google.load("jquery", "1.5.1");</script>
 	<script type="text/javascript" src="jquery.watermark.js"></script>
 
 	<style type="text/css" media="screen">
@@ -228,8 +228,8 @@
 			<li><label for="d4-name">Name <em>*</em></label> <input id="d4-name" /></li>
 			<li><label for="d4-address">Address <em>*</em></label> <textarea id="d4-address" name="d4-address" rows="4" cols="60"></textarea></li>
 			<li><label for="d4-country">Country</label> <input id="d4-country" /></li>
-			<li><label></label> <input type="submit" value="Submit" /></li>
-			<li><label></label> &bull; This is a normal <strong>type=&quot;submit&quot;</strong> button.</li>
+			<li><label></label> <input id="d4-submit" type="submit" value="Submit" /></li>
+			<li><label></label> &bull; This is a normal <strong>type=&quot;submit&quot;</strong> button. We attempt to watermark the button, but it should have no effect.</li>
 			<li><label></label> &bull; Check the QueryString after clicking to verify that a watermark value is never submitted.</li>
 		</ol>
 	</fieldset>
@@ -375,6 +375,7 @@
 	// ** DEMO 4 *************
 	$(function () {
 		$("#d4-address").watermark("Full street address\nCity, state and zip\nUse as many lines as necessary.");
+		$("#d4-submit").watermark("No watermark should be set.");
 	});
 
 	// ** DEMO 5 *************

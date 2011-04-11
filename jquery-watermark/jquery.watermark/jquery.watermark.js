@@ -28,12 +28,15 @@ var
 	
 	// Copy of native jQuery regex use to strip return characters from element value
 	rreturn = /\r/g,
+	
+	// Used to determine if type attribute of input element is a non-text type (invalid)
+	rInvalidType = /^(button|checkbox|hidden|image|radio|range|reset|submit)$/i,
 
 	// Includes only elements with watermark defined
 	selWatermarkDefined = "input:data(" + dataFlag + "),textarea:data(" + dataFlag + ")",
 
 	// Includes only elements capable of having watermark
-	selWatermarkAble = "input:text,input:password,input[type=search],input:not([type]),textarea",
+	selWatermarkAble = ":watermarkable",
 	
 	// triggerFns:
 	// Array of function names to look for in the global namespace.
@@ -489,8 +492,31 @@ if ($.watermark.runOnce) {
 		// A more sophisticated version of the :data() custom selector originally part of this plugin
 		// was removed for compatibility with jQuery UI. The original code can be found in the SVN
 		// source listing in the file, "jquery.data.js".
-		data: function( elem, i, match ) {
+		data: $.expr[":"].data || function( elem, i, match ) {
 			return !!$.data( elem, match[ 3 ] );
+		},
+		
+		// Extends jQuery with a custom selector - ":watermarkable"
+		// Includes elements that can be watermarked, including textareas and most input elements
+		// that accept text input.  It uses a "negative" test (i.e., testing for input types that DON'T
+		// work) because the HTML spec states that you can basically use any type, and if it doesn't
+		// recognize the type it will default to type=text.  So if we only looked for certain type attributes
+		// we would fail to recognize non-standard types, which are still valid and watermarkable.
+		watermarkable: function ( elem, i, match ) {
+			var type,
+				name = elem.nodeName;
+			
+			if ( name === "TEXTAREA" ) {
+				return true;
+			}
+			
+			if ( name !== "INPUT" ) {
+				return false;
+			}
+			
+			type = elem.getAttribute( "type" );
+			
+			return ((!type) || (!rInvalidType.test( type )));
 		}
 	});
 
@@ -498,37 +524,38 @@ if ($.watermark.runOnce) {
 	// watermarked input elements.  When .val() is being used to set values, this
 	// function ensures watermarks are properly set/removed after the values are set.
 	// Uses self-executing function to override the default jQuery function.
-	(function (valOld) {
+	(function ( valOld ) {
 
 		$.fn.val = function () {
+			var args = Array.prototype.slice.call( arguments );
 			
 			// Best practice: return immediately if empty matched set
 			if ( !this.length ) {
-				return arguments.length? this : undefined;
+				return args.length? this : undefined;
 			}
 
 			// If no args, then we're getting the value of the first element;
-			// otherwise we're setting values for all elements in matched set
-			if ( !arguments.length ) {
+			// else we're setting values for all elements in matched set
+			if ( !args.length ) {
 
 				// If element is watermarked, get the underlying value;
-				// otherwise use native jQuery .val()
-				if ( this.data(dataFlag) ) {
-					var v = (this[0].value || "").replace(rreturn, "");
-					return (v === (this.data(dataText) || ""))? "" : v;
+				// else use native jQuery .val()
+				if ( this.data( dataFlag ) ) {
+					var v = (this[0].value || "").replace( rreturn, "" );
+					return (v === (this.data( dataText ) || ""))? "" : v;
 				}
 				else {
-					return valOld.apply( this, arguments );
+					return valOld.apply( this );
 				}
 			}
 			else {
-				valOld.apply( this, arguments );
-				$.watermark.show(this);
+				valOld.apply( this, args );
+				$.watermark.show( this );
 				return this;
 			}
 		};
 
-	})($.fn.val);
+	})( $.fn.val );
 	
 	// Hijack any functions found in the triggerFns list
 	if (triggerFns.length) {
@@ -545,7 +572,7 @@ if ($.watermark.runOnce) {
 					window[name] = (function (origFn) {
 						return function () {
 							$.watermark.hideAll();
-							return origFn.apply(null, Array.prototype.slice.call(arguments));
+							return origFn.apply( null, Array.prototype.slice.call( arguments ) );
 						};
 					})(fn);
 				}
