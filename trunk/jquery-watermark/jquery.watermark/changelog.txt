@@ -1,8 +1,20 @@
 Changelog for Watermark plugin for jQuery
-Copyright © 2009-2012 Todd Northrop
+Copyright © 2009-2014 Todd Northrop
 http://www.speednet.biz/
 
-Last updated August 13, 2012
+Last updated August 16, 2014
+
+____________________________
+Version 3.2.0 (2014-08-16)
+	
+	Fixed Issue #24 (on submit, hide watermarks only in the form being submitted?) - The hideAll() function has been given an optional scope argument to support this enhancement.
+	
+	Added new option - clearAllFormsOnSubmit - that when set to true will negate the effects of the new form submit enhancement, and will clear the watermarks within all forms upon the submission of any form on a page.
+	
+	Fixed Issue #48 (Enhancement request - optionally leave some watermarks visible on form submit) - This issue is solved via the fix for Issue #24: Place any such elements outside of the form being submitted and they will not have their watermark removed upon submit. Not a perfect solution, but probably enough for the edge cases needing this.
+	
+	Fixed Issue #62 (Enhancement - Multi Element apply, different text for each element using "placeholder" attribute) - Added a new option "textAttr" that can be used to pass the name of an attribute to get the watermark text from. When using the textAttr option, the watermark text string passed in the first argument is ignored; therefore the watermark function was changed to allow the options object to be the first/only argument passed if it includes the textAttr option.
+	
 
 ____________________________
 Version 3.1.4 (2012-08-13)
