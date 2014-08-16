@@ -64,7 +64,7 @@ var
 $.watermark = $.watermark || {
 
 	// Current version number of the plugin
-	version: "3.1.4",
+	version: "3.2.0",
 		
 	runOnce: true,
 	
@@ -76,11 +76,21 @@ $.watermark = $.watermark || {
 		// Default class name for all watermarks
 		className: "watermark",
 		
-		// The default functionality is to clear the watermarks from
+		// The default functionality is to clear the watermarks only from
 		// the form being submitted.  Changing this option to true will
-		// clear the watermarks from all forms on the page when any
-		// form is submitted.
+		// clear the watermarks from all forms on the page regardless
+		// of which form is submitted.
 		clearAllFormsOnSubmit: false,
+		
+		// If true, all watermarks will be hidden during the window's
+		// beforeunload event. This is done mainly because WebKit
+		// browsers remember the watermark text during navigation
+		// and try to restore the watermark text after the user clicks
+		// the Back button. We can avoid this by hiding the text before
+		// the browser has a chance to save it. The regular unload event
+		// was tried, but it seems the browser saves the text before
+		// that event kicks off, because it didn't work.
+		hideBeforeUnload: true,
 		
 		// Set to the name of an attribute in order to automatically
 		// use the attribute's content as the watermark text.  For
@@ -93,18 +103,8 @@ $.watermark = $.watermark || {
 		textAttr: "",
 		
 		// If true, plugin will detect and use native browser support for
-		// watermarks, if available. (e.g., WebKit's placeholder attribute.)
-		useNative: true,
-		
-		// If true, all watermarks will be hidden during the window's
-		// beforeunload event. This is done mainly because WebKit
-		// browsers remember the watermark text during navigation
-		// and try to restore the watermark text after the user clicks
-		// the Back button. We can avoid this by hiding the text before
-		// the browser has a chance to save it. The regular unload event
-		// was tried, but it seems the browser saves the text before
-		// that event kicks off, because it didn't work.
-		hideBeforeUnload: true
+		// watermarks, if available. (i.e., placeholder attribute.)
+		useNative: true
 	},
 	
 	// Hide one or more watermarks by specifying any selector type
