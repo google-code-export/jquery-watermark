@@ -2,7 +2,7 @@
 <html>
 <head>
 	<meta http-equiv="Content-Type" content="text/html;charset=utf-8" />
-	<title>jQuery Watermark 3.1.4 Demo</title>
+	<title>jQuery Watermark 3.2.0 Demo</title>
 
 	<script type="text/javascript" src="http://code.jquery.com/jquery-1.9.1.min.js"></script>
 	<script type="text/javascript" src="jquery.watermark.js"></script>
@@ -137,7 +137,7 @@
 <body>
 
 <h1>jQuery Watermark Plugin</h1>
-<h2>v 3.1.4</h2>
+<h2>v 3.2.0</h2>
 
 <fieldset id="summary">
 	<p>This jQuery plugin will easily create watermark hints in input and textarea elements.</p>
@@ -161,6 +161,7 @@
 		<li><a href="#5">Demo 5</a> &ndash; Watermark in a password input element</li>
 		<li><a href="#6">Demo 6</a> &ndash; Support for WebKit search element (type=&quot;search&quot;)</li>
 		<li><a href="#7">Demo 7</a> &ndash; .val() gets/sets underlying element value</li>
+		<li><a href="#8">Demo 8</a> &ndash; Use placeholder attribute value to set watermark</li>
 	</ul>
 </fieldset>
 
@@ -291,9 +292,29 @@
 		</ol>
 	</fieldset>
 </form>
+
+<form id="demo8" action="" method="GET" class="cmxform">
+	<h3>Demonstration 8</h3>
+	<fieldset>
+		<legend>Use placeholder attribute value to set watermark</legend>
+		<ol>
+			<li><label for="d8-firstname">Name</label> <input id="d8-firstname" name="d8-firstname" placeholder="First" /> <input id="d8-lastname" name="d8-lastname" placeholder="Last" /></li>
+			<li><label for="d8-city">City</label> <input id="d8-city" name="d8-city" /></li>
+			<li><label for="d8-state">State</label> <input id="d8-state" name="d8-state" title="Optional" /></li>
+			<li><label></label> <input type="submit" value="Submit" /></li>
+			<li><label></label> &bull; This demonstration uses the textAttr option set to &quot;placeholder&quot; to set the watermark text to the value of the placeholder attribute.</li>
+			<li><label></label> &bull; In this demo, all the watermarks (except State, see below) are set with a single statement:<br /><label></label> &nbsp; &nbsp; &nbsp; &nbsp; <strong>$( &quot;#demo8 :text&quot; ).watermark( { textAttr: &quot;placeholder&quot; } );</strong></li>
+			<li><label></label> &bull; You could also call it using <strong>.watermark( &quot;&quot;, { textAttr: &quot;placeholder&quot; } )</strong> (with empty string), but using textAttr makes the first argument optional.</li>
+			<li><label></label> &bull; The useNative option is set to its default true value, so this has the effect of enabling placeholder support in older browsers.</li>
+			<li><label></label> &bull; The City element does not have a placeholder attribute, testing that it does not attempt to set a watermark on that element.</li>
+			<li><label></label> &bull; The State watermark is set using the title attribute. A second jQuery statement sets it:<br /><label></label> &nbsp; &nbsp; &nbsp; &nbsp; <strong>$( &quot;#d8-state&quot; ).watermark( { textAttr: &quot;title&quot; } );</strong></li>
+		</ol>
+	</fieldset>
+</form>
+
 <div id="foot">
 	<p>Watermark plugin for jQuery</p>
-	<p>Copyright &copy; 2009-2011 Todd Northrop</p>
+	<p>Copyright &copy; 2009-2014 Todd Northrop</p>
 	<p>Visit Speednet Group at <a href="http://www.speednet.biz/">www.speednet.biz</a></p>
 	<h1>Some of our projects:</h1>
 	<ul>
@@ -419,6 +440,12 @@
 			$("#d7-name,#d7-address1,#d7-town-city,#d7-state,#d7-postcode,#d7-country,#d7-phone").val("");
 		});
 	});
+
+	// ** DEMO 8 *************
+	$( function () {
+		$( "#demo8 :text" ).watermark( { textAttr: "placeholder" } );
+		$( "#d8-state" ).watermark( { textAttr: "title" } );
+	} );
 
 	// ** Table of Contents *************
 	$("#toc li a").each(function () {
