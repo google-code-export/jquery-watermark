@@ -1,12 +1,12 @@
 /*	
 	Watermark plugin for jQuery
-	Version: 3.1.4
+	Version: 3.2.0
 	http://jquery-watermark.googlecode.com/
 
-	Copyright (c) 2009-2012 Todd Northrop
+	Copyright (c) 2009-2014 Todd Northrop
 	http://www.speednet.biz/
 	
-	August 13, 2012
+	August 16, 2014
 
 	Requires:  jQuery 1.2.3+
 	
@@ -64,7 +64,7 @@ var
 $.watermark = $.watermark || {
 
 	// Current version number of the plugin
-	version: "3.1.4",
+	version: "3.2.0",
 		
 	runOnce: true,
 	
@@ -76,9 +76,11 @@ $.watermark = $.watermark || {
 		// Default class name for all watermarks
 		className: "watermark",
 		
-		// If true, plugin will detect and use native browser support for
-		// watermarks, if available. (e.g., WebKit's placeholder attribute.)
-		useNative: true,
+		// The default functionality is to clear the watermarks only from
+		// the form being submitted.  Changing this option to true will
+		// clear the watermarks from all forms on the page regardless
+		// of which form is submitted.
+		clearAllFormsOnSubmit: false,
 		
 		// If true, all watermarks will be hidden during the window's
 		// beforeunload event. This is done mainly because WebKit
@@ -88,7 +90,21 @@ $.watermark = $.watermark || {
 		// the browser has a chance to save it. The regular unload event
 		// was tried, but it seems the browser saves the text before
 		// that event kicks off, because it didn't work.
-		hideBeforeUnload: true
+		hideBeforeUnload: true,
+		
+		// Set to the name of an attribute in order to automatically
+		// use the attribute's content as the watermark text.  For
+		// example, set to "placeholder" to automatically use the
+		// placeholder attribute content as the watermark text.
+		// If the attribute specified does not have a value or is empty
+		// no watermark will be set.  If textAttr is set to "placeholder"
+		// and useNative is set to true, it has the effect of simply
+		// adding support for the placeholder attribute to old browsers.
+		textAttr: "",
+		
+		// If true, plugin will detect and use native browser support for
+		// watermarks, if available. (i.e., placeholder attribute.)
+		useNative: true
 	},
 	
 	// Hide one or more watermarks by specifying any selector type
@@ -204,9 +220,11 @@ $.watermark = $.watermark || {
 	},
 	
 	// Hides all watermarks on the current page.
-	hideAll: function () {
+	// scope argument is optional; used by the submit handler to only
+	// clear watermarks in the submitted form.
+	hideAll: function ( scope ) {
 		if ( pageDirty ) {
-			$.watermark.hide( selWatermarkAble );
+			$.watermark.hide( $( selWatermarkAble, scope ) );
 			pageDirty = false;
 		}
 	},
@@ -290,6 +308,10 @@ $.fn.watermark = $.fn.watermark || function ( text, options ) {
 		hasClass = true;
 		options = $.extend( {}, $.watermark.options, { className: options } );
 	}
+	else if ( typeof( text ) === "object" ) {
+		options = $.extend( {}, $.watermark.options, text );
+		text = "";
+	}
 	else {
 		options = $.watermark.options;
 	}
@@ -304,6 +326,11 @@ $.fn.watermark = $.fn.watermark || function ( text, options ) {
 			
 			if ( !$input.is( selWatermarkAble ) ) {
 				return;
+			}
+			
+			if ( options.textAttr ) {
+				text = ( $input.attr( options.textAttr ) || "" ).replace( rreturn, "" );
+				hasText = !!text;
 			}
 			
 			// Watermark already initialized?
@@ -332,7 +359,7 @@ $.fn.watermark = $.fn.watermark || function ( text, options ) {
 				) {
 					// className is not set because current placeholder standard doesn't
 					// have a separate class name property for placeholders (watermarks).
-					if ( hasText ) {
+					if ( ( hasText ) && ( options.textAttr !== "placeholder" ) ) {
 						$input.attr( "placeholder", text );
 					}
 					
@@ -431,7 +458,7 @@ $.fn.watermark = $.fn.watermark || function ( text, options ) {
 						$form = $( form );
 					
 					if ( !$form.data( dataFormSubmit ) ) {
-						$form.submit( $.watermark.hideAll );
+						$form.submit( function () { return $.watermark.hideAll.apply( this, options.clearAllFormsOnSubmit? [] : [ form ] ); } );
 						
 						// form.submit exists for all browsers except Google Chrome
 						// (see "else" below for explanation)
@@ -442,7 +469,7 @@ $.fn.watermark = $.fn.watermark || function ( text, options ) {
 								return function () {
 									var nativeSubmit = $f.data( dataFormSubmit );
 									
-									$.watermark.hideAll();
+									$.watermark.hideAll( options.clearAllFormsOnSubmit? null : f );
 									
 									if ( nativeSubmit.apply ) {
 										nativeSubmit.apply( f, Array.prototype.slice.call( arguments ) );
@@ -465,7 +492,7 @@ $.fn.watermark = $.fn.watermark || function ( text, options ) {
 							// which, in the world of Google Chrome, still exists.
 							form.submit = ( function ( f ) {
 								return function () {
-									$.watermark.hideAll();
+									$.watermark.hideAll( options.clearAllFormsOnSubmit? null : f );
 									delete f.submit;
 									f.submit();
 								};
